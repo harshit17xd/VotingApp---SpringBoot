@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import com.voting.model.OptionVote;
 import com.voting.model.Poll;
 import com.voting.repositories.PollRepository;
 
@@ -29,6 +30,29 @@ public class PollService {
 
     public Optional<Poll> getPollById(Long id) {
         return pollRepository.findById(id);
+    }
+
+    public void vote(Long pollId, int optionIndex) {
+        //get poll from DB
+        Poll poll = pollRepository.findById(pollId)
+                .orElseThrow(() -> new RuntimeException("Poll not found!!"));
+
+        //get all options
+        List<OptionVote> options = poll.getOptions();
+
+        //if index is not valid, throw error
+        if(optionIndex < 0 || optionIndex >= options.size()){
+            throw new IllegalArgumentException("Invalid option index");
+        }
+
+        //option
+        OptionVote selectedOption = options.get(optionIndex);
+
+        //increment vote for selected option
+        selectedOption.setVoteCount(selectedOption.getVoteCount() + 1);
+
+        //save incremented vote option into db
+        pollRepository.save(poll);
     }
 
     

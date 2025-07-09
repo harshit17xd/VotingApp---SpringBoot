@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.voting.model.Poll;
+import com.voting.request.Vote;
 import com.voting.services.PollService;
 
 @RestController
@@ -46,8 +47,10 @@ public class PollController {
 
     //Voting
     //POST
-
-
+    @PostMapping("/vote")
+    public void vote(@RequestBody Vote vote){
+        pollService.vote(vote.getPollId(),vote.getOptionIndex());
+    }
 }
 
 
