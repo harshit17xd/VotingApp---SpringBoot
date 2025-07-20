@@ -13,6 +13,15 @@ import { FormsModule } from '@angular/forms';
 })
 export class PollComponent implements OnInit{
 
+  newPoll: Poll = {
+    id: null, 
+    question: '',
+    options: [
+      { optionText: '', voteCount: 0},
+      { optionText: '', voteCount: 0}
+    ]
+  };
+
   polls: Poll[] = [];
 
   constructor(private pollService: PollService){
@@ -22,6 +31,7 @@ export class PollComponent implements OnInit{
   ngOnInit(): void {
       this.loadPolls();
   }
+
   loadPolls(){
     this.pollService.getPolls().subscribe({
       next: (data) => {
@@ -32,4 +42,33 @@ export class PollComponent implements OnInit{
       },
     });
   }
+
+  createPoll() {
+    this.pollService.createPoll(this.newPoll).subscribe({
+      next: (createdPoll) =>{
+        this.polls.push(createdPoll);
+        this.resetPoll();
+        console.log('Poll created successfully', createdPoll);
+      },
+      error:  (error) =>{
+         console.error('Error creating poll', error);
+      }
+    });
+  }
+
+  resetPoll() {
+    this.newPoll = {
+    id: null, 
+    question: '',
+    options: [
+        { optionText: '', voteCount: 0},
+        { optionText: '', voteCount: 0}
+      ]
+    };
+  }
+
+  trackByIndex(index: number): number{
+    return index;
+  }
+
 }
